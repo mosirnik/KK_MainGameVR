@@ -3,3 +3,5 @@ Eusthì¬VRGIN.Template‚ğA©•ª‚Ì‰ü‘¢‚µ‚½VRGIN Unity5.6‘Î‰”Å‚ğQÆ‚·‚é‚æ‚¤‚É
 
 # g‚¢•û How to Use It.
 Eusth‚Ì[VRGIN.Template](https://github.com/Eusth/VRGIN.Template)‚ğQÆB
+
+Unity5.6“Á—L‚ÌVR‰»•û–@‚É‚Â‚¢‚Ä‚Í[obtdai/VRGIN](https://github.com/obtdai/VRGIN)‚ğQÆB
