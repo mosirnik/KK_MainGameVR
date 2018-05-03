@@ -1,4 +1,4 @@
-obtdai様版の[VRGIN.Template](https://github.com/obtdai/VRGIN.Templete)を触ってなんとかコイカツ本編をVRで操作できるようにしたいもの
+obtdai様版の[VRGIN.Template](https://github.com/obtdai/VRGIN.Template)を触ってなんとかコイカツ本編をVRで操作できるようにしたいもの
 
 〇操作方法
 新たに学校のアイコンのツールが追加されています
