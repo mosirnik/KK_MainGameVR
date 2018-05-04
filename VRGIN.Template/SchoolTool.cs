@@ -42,8 +42,8 @@ namespace KoikatuVR
             cam.rotation = player.rotation;
             var delta_y =  cam.rotation.eulerAngles.y - headCam.rotation.eulerAngles.y;
             cam.Rotate(Vector3.up * delta_y);
-            Vector3 cf = Vector3.Scale(cam.forward, new Vector3(1, 0, 1)).normalized;
-            cam.position = pos;// - cf * 0.1f;
+            Vector3 cf = Vector3.Scale(player.forward, new Vector3(1, 0, 1)).normalized;
+            cam.position = pos + cf * 0.15f; // 首が見えるとうざいのでほんの少し前目
         }
 
         private void MovePlayerToCamera(Boolean onlyRotation = false)
@@ -66,6 +66,30 @@ namespace KoikatuVR
             }
         }
 
+        // プレイヤーと一体化する
+        private void LinkPlayer()
+        {
+            var pl = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root");
+
+            if (pl != null)
+            {
+                GameObject.Find("ActionScene/CameraSystem").SetActive(true);
+                pl.SetActive(true);
+                MoveCameraToPlayer();
+            }
+        }
+
+        private void UnlinkPlayer()
+        {
+            var pl = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root");
+
+            if (pl != null)
+            {
+                GameObject.Find("ActionScene/CameraSystem").SetActive(false);
+                pl.SetActive(false);
+            }
+        }
+
         protected override void OnAwake()
         {
             base.OnAwake();
@@ -85,10 +109,21 @@ namespace KoikatuVR
         protected override void OnDisable()
         {
             base.OnDisable();
+
+            UnlinkPlayer();
         }
         protected override void OnEnable()
         {
             base.OnEnable();
+
+            LinkPlayer();
+        }
+        
+        protected override void OnLevel(int level)
+        {
+            base.OnLevel(level);
+
+            LinkPlayer();
         }
 
         protected override void OnUpdate()
