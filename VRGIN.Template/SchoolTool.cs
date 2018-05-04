@@ -28,7 +28,7 @@ namespace KoikatuVR
             }
         }
 
-        private void cam2pl()
+        private void MoveCameraToPlayer()
         {
             var player = GameObject.Find("ActionScene/Player").transform;
             var playerHead = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head").transform;
@@ -43,10 +43,10 @@ namespace KoikatuVR
             var delta_y =  cam.rotation.eulerAngles.y - headCam.rotation.eulerAngles.y;
             cam.Rotate(Vector3.up * delta_y);
             Vector3 cf = Vector3.Scale(cam.forward, new Vector3(1, 0, 1)).normalized;
-            cam.position = pos - cf * 0.1f;
+            cam.position = pos;// - cf * 0.1f;
         }
 
-        private void pl2cam(Boolean onlyRotation = false)
+        private void MovePlayerToCamera(Boolean onlyRotation = false)
         {
             var player = GameObject.Find("ActionScene/Player").transform;
             var playerHead = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head").transform;
@@ -99,7 +99,7 @@ namespace KoikatuVR
 
             if (device.GetPressDown(ButtonMask.Trigger))
             {
-                pl2cam(true);
+                MovePlayerToCamera(true);
                 VR.Input.Keyboard.KeyDown(VirtualKeyCode.SHIFT);
                 VR.Input.Mouse.LeftButtonDown();
             }
@@ -112,13 +112,13 @@ namespace KoikatuVR
 
             if (device.GetPress(ButtonMask.Trigger))
             {
-                cam2pl();
+                MoveCameraToPlayer();
             }
 
             
             if (device.GetPress(ButtonMask.Grip))
             {
-                pl2cam();
+                MovePlayerToCamera();
             }
 
 
