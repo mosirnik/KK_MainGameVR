@@ -98,11 +98,11 @@ VRSettings.xmlを書き換えることで割り当てを変えることができ
 ~~~
   <KeySets>
     <KeySet>
-      <Up>VK_F1</Up>
+      <Up>F1</Up>
       <Down>NEXT</Down>
-      <Right>VK_F3</Right>
-      <Left>VK_F4</Left>
-      <Center>VK_RBUTTON</Center>
+      <Right>F3</Right>
+      <Left>F4</Left>
+      <Center>RBUTTON</Center>
     </KeySet>
     <KeySet>
       <Up>LBUTTON</Up>
