@@ -77,8 +77,8 @@ namespace KoikatuVR
 
             if (pl != null)
             {
-                GameObject.Find("ActionScene/CameraSystem").SetActive(true);
-                pl.SetActive(true);
+                GameObject.Find("ActionScene/CameraSystem").SetActive(false);
+                pl.SetActive(false);
                 MoveCameraToPlayer();
             }
         }
@@ -89,8 +89,8 @@ namespace KoikatuVR
 
             if (pl != null)
             {
-                GameObject.Find("ActionScene/CameraSystem").SetActive(false);
-                pl.SetActive(false);
+                GameObject.Find("ActionScene/CameraSystem").SetActive(true);
+                pl.SetActive(true);
             }
         }
 
