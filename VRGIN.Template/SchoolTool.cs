@@ -20,6 +20,10 @@ namespace KoikatuVR
 {
     public class SchoolTool : Tool
     {
+        private KeySet keySet = (VR.Context.Settings as KoikatuSettings).KeySets[0];
+        // 手抜きのためNumpad方式で方向を保存
+        private int _prevTouchDirection = -1;
+
         public override Texture2D Image
         {
             get
@@ -163,53 +167,93 @@ namespace KoikatuVR
                 {
                     if (touchPosition.y > 0.8f) // up
                     {
-                        VR.Input.Keyboard.KeyPress(VirtualKeyCode.F3);
+                        inputKey(keySet.Up, KeyMode.PressDown);
+                        _prevTouchDirection = 8;
                     }
                     else if (touchPosition.y < -0.8f) // down
                     {
-                        VR.Input.Keyboard.KeyPress(VirtualKeyCode.F4);
+                        inputKey(keySet.Down, KeyMode.PressDown);
+                        _prevTouchDirection = 2;
                     }
                     else if (touchPosition.x > 0.8f) // right
                     {
-                        VR.Input.Keyboard.KeyPress(VirtualKeyCode.F8);
+                        inputKey(keySet.Right, KeyMode.PressDown);
+                        _prevTouchDirection = 6;
                     }
                     else if (touchPosition.x < -0.8f)// left
                     {
-                        VR.Input.Keyboard.KeyPress(VirtualKeyCode.F1);
+                        inputKey(keySet.Left, KeyMode.PressDown);
+                        _prevTouchDirection = 4;
                     }
                     else
                     {
-                        VR.Input.Mouse.RightButtonClick();
+                        inputKey(keySet.Center, KeyMode.PressDown);
+                        _prevTouchDirection = 5;
                     }
                 }
              }
-                /*
-                if (device.GetTouchUp(SteamVR_Controller.ButtonMask.Touchpad))
+
+            // 上げたときの位置によらず、押したボタンを離す
+            if (device.GetPressUp(ButtonMask.Touchpad))
+            {
+                Vector2 touchPosition = device.GetAxis();
                 {
-                    Vector2 touchPosition = device.GetAxis();
-                    if (touchPosition.y / touchPosition.x > 1 || touchPosition.y / touchPosition.x < -1)
+                    if (_prevTouchDirection == 8) // up
                     {
-                        if (touchPosition.y > 0) // up
-                        {
-                            VR.Input.Keyboard.KeyUp(VirtualKeyCode.F3);
-                        }
-                        else // down
-                        {
-                            VR.Input.Keyboard.KeyUp(VirtualKeyCode.F4);
-                        }
+                        inputKey(keySet.Up, KeyMode.PressUp);
                     }
-                    else
+                    else if (_prevTouchDirection == 2) // down
                     {
-                        if (touchPosition.x > 0) // right
-                        {
-                            VR.Input.Keyboard.KeyUp(VirtualKeyCode.F2);
-                        }
-                        else // left
-                        {
-                            VR.Input.Keyboard.KeyUp(VirtualKeyCode.F5);
-                        }
+                        inputKey(keySet.Down, KeyMode.PressUp);
                     }
-                }*/
+                    else if (_prevTouchDirection == 6) // right
+                    {
+                        inputKey(keySet.Right, KeyMode.PressUp);
+                    }
+                    else if (_prevTouchDirection == 4)// left
+                    {
+                        inputKey(keySet.Left, KeyMode.PressUp);
+                    }
+                    else if (_prevTouchDirection == 5)
+                    {
+                        inputKey(keySet.Center, KeyMode.PressUp);
+                    }
+                }
+            }
+        }
+
+        private void inputKey(string keyName, KeyMode mode)
+        {
+            if (mode == KeyMode.PressDown)
+            {
+                switch (keyName)
+                {
+                    case "LBUTTON":
+                        VR.Input.Mouse.LeftButtonDown();
+                        break;
+                    case "RBUTTON":
+                        VR.Input.Mouse.RightButtonDown();
+                        break;
+                    default:
+                        VR.Input.Keyboard.KeyDown((VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), keyName));
+                        break;
+                }
+            }
+            else
+            {
+                switch(keyName)
+                {
+                    case "LBUTTON":
+                        VR.Input.Mouse.LeftButtonUp();
+                        break;
+                    case "RBUTTON":
+                        VR.Input.Mouse.RightButtonUp();
+                        break;
+                    default:
+                        VR.Input.Keyboard.KeyUp((VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), keyName));
+                        break;
+                }
+            }
         }
 
         public override List<HelpText> GetHelpTexts()

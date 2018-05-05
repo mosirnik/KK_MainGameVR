@@ -59,6 +59,7 @@
     <Compile Include="VRPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchoolTool.cs" />
+    <Compile Include="KoikatuSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VRGIN\VRGIN\VRGIN.csproj">

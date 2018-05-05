@@ -24,7 +24,7 @@ namespace KoikatuVR
         {
             // We'll keep those always the same
             _Materials = new DefaultMaterialPalette();
-            _Settings = VRSettings.Load<VRSettings>("VRSettings.xml");
+            _Settings = KoikatuSettings.Load("VRSettings.xml");
 
             // Set defaults
             ConfineMouse = true;
