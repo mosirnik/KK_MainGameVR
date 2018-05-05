@@ -39,15 +39,12 @@ namespace KoikatuVR
             var cam = GameObject.Find("VRGIN_Camera (origin)").transform;
             var headCam = GameObject.Find("VRGIN_Camera (origin)/VRGIN_Camera (eye)/VRGIN_Camera (head)").transform;
 
-            var pos = playerHead.position;
-            pos += cam.position - headCam.position;
-            //pos.y += 1.85f;
-
             cam.rotation = player.rotation;
             var delta_y =  cam.rotation.eulerAngles.y - headCam.rotation.eulerAngles.y;
             cam.Rotate(Vector3.up * delta_y);
+
             Vector3 cf = Vector3.Scale(player.forward, new Vector3(1, 0, 1)).normalized;
-            cam.position = pos + cf * 0.15f; // 首が見えるとうざいのでほんの少し前目
+            cam.position = playerHead.position - (headCam.position - cam.position) + cf * 0.15f; // 首が見えるとうざいのでほんの少し前目
         }
 
         private void MovePlayerToCamera(Boolean onlyRotation = false)
@@ -68,6 +65,13 @@ namespace KoikatuVR
             {
                 player.position = pos - cf * 0.1f;
             }
+        }
+
+        private void Rotate(int angle)
+        {
+            var player = GameObject.Find("ActionScene/Player").transform;
+            player.Rotate(Vector3.up * angle);
+            MoveCameraToPlayer();
         }
 
         // プレイヤーと一体化する
@@ -167,27 +171,27 @@ namespace KoikatuVR
                 {
                     if (touchPosition.y > 0.8f) // up
                     {
-                        inputKey(keySet.Up, KeyMode.PressDown);
+                        InputKey(keySet.Up, KeyMode.PressDown);
                         _prevTouchDirection = 8;
                     }
                     else if (touchPosition.y < -0.8f) // down
                     {
-                        inputKey(keySet.Down, KeyMode.PressDown);
+                        InputKey(keySet.Down, KeyMode.PressDown);
                         _prevTouchDirection = 2;
                     }
                     else if (touchPosition.x > 0.8f) // right
                     {
-                        inputKey(keySet.Right, KeyMode.PressDown);
+                        InputKey(keySet.Right, KeyMode.PressDown);
                         _prevTouchDirection = 6;
                     }
                     else if (touchPosition.x < -0.8f)// left
                     {
-                        inputKey(keySet.Left, KeyMode.PressDown);
+                        InputKey(keySet.Left, KeyMode.PressDown);
                         _prevTouchDirection = 4;
                     }
                     else
                     {
-                        inputKey(keySet.Center, KeyMode.PressDown);
+                        InputKey(keySet.Center, KeyMode.PressDown);
                         _prevTouchDirection = 5;
                     }
                 }
@@ -200,29 +204,29 @@ namespace KoikatuVR
                 {
                     if (_prevTouchDirection == 8) // up
                     {
-                        inputKey(keySet.Up, KeyMode.PressUp);
+                        InputKey(keySet.Up, KeyMode.PressUp);
                     }
                     else if (_prevTouchDirection == 2) // down
                     {
-                        inputKey(keySet.Down, KeyMode.PressUp);
+                        InputKey(keySet.Down, KeyMode.PressUp);
                     }
                     else if (_prevTouchDirection == 6) // right
                     {
-                        inputKey(keySet.Right, KeyMode.PressUp);
+                        InputKey(keySet.Right, KeyMode.PressUp);
                     }
                     else if (_prevTouchDirection == 4)// left
                     {
-                        inputKey(keySet.Left, KeyMode.PressUp);
+                        InputKey(keySet.Left, KeyMode.PressUp);
                     }
                     else if (_prevTouchDirection == 5)
                     {
-                        inputKey(keySet.Center, KeyMode.PressUp);
+                        InputKey(keySet.Center, KeyMode.PressUp);
                     }
                 }
             }
         }
 
-        private void inputKey(string keyName, KeyMode mode)
+        private void InputKey(string keyName, KeyMode mode)
         {
             if (mode == KeyMode.PressDown)
             {
@@ -234,6 +238,10 @@ namespace KoikatuVR
                     case "RBUTTON":
                         VR.Input.Mouse.RightButtonDown();
                         break;
+                    case "LROTATION":
+                    case "RROTATION":
+                        // ここでは何もせず、上げたときだけ処理する
+                        break;
                     default:
                         VR.Input.Keyboard.KeyDown((VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), keyName));
                         break;
@@ -241,13 +249,19 @@ namespace KoikatuVR
             }
             else
             {
-                switch(keyName)
+                switch (keyName)
                 {
                     case "LBUTTON":
                         VR.Input.Mouse.LeftButtonUp();
                         break;
                     case "RBUTTON":
                         VR.Input.Mouse.RightButtonUp();
+                        break;
+                    case "LROTATION":
+                        Rotate(-45);
+                        break;
+                    case "RROTATION":
+                        Rotate(45);
                         break;
                     default:
                         VR.Input.Keyboard.KeyUp((VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), keyName));
