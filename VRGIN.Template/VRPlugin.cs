@@ -23,7 +23,7 @@ namespace KoikatuVR
         {
             get
             {
-                return "My Kick-Ass VR Plugin";
+                return "KoikatuVR";
             }
         }
 
@@ -31,7 +31,7 @@ namespace KoikatuVR
         {
             get
             {
-                return "1.0";
+                return "0.3";
             }
         }
 
