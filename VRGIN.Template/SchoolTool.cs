@@ -21,8 +21,18 @@ namespace KoikatuVR
     public class SchoolTool : Tool
     {
         private KeySet keySet = (VR.Context.Settings as KoikatuSettings).KeySets[0];
+        private int keySetIndex = 0;
+
         // 手抜きのためNumpad方式で方向を保存
         private int _prevTouchDirection = -1;
+
+        private void ChangeKeySet()
+        {
+            List<KeySet> keySets = (VR.Context.Settings as KoikatuSettings).KeySets;
+
+            keySetIndex = (keySetIndex + 1) % keySets.Count;
+            keySet = keySets[keySetIndex];
+        }
 
         public override Texture2D Image
         {
@@ -240,6 +250,7 @@ namespace KoikatuVR
                         break;
                     case "LROTATION":
                     case "RROTATION":
+                    case "NEXT":
                         // ここでは何もせず、上げたときだけ処理する
                         break;
                     default:
@@ -262,6 +273,9 @@ namespace KoikatuVR
                         break;
                     case "RROTATION":
                         Rotate(45);
+                        break;
+                    case "NEXT":
+                        ChangeKeySet();
                         break;
                     default:
                         VR.Input.Keyboard.KeyUp((VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), keyName));
