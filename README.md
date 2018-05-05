@@ -1,5 +1,50 @@
 obtdai様版の[VRGIN.Template](https://github.com/obtdai/VRGIN.Template)を触ってなんとかコイカツ本編をVRで操作できるようにしたいもの
 
+極めて実験的なバージョンです。いろいろと不便ですし、不具合が起こる可能性も高いですので、そういったことをご理解いただいた上で自己責任でお願いします。
+
+# 導入方法
+1. [release](https://github.com/vrhth/KoikatuVR/releases)から最新のzipを落とす
+1. 中身を全てインストールフォルダにコピーする（Koikatu.exeとIPA.exeを同じ階層になるように）
+1. Koikatu.exeをIPA.exeにドラッグ&ドロップ
+1. Koikatu_Data/globalgamemanagersを修正する
+    1. [UABE](https://github.com/DerPopo/UABE/releases)でglobalgamemanagersを開く（確認時のバージョンは2.2 beta2）
+    1. Path ID列が11のTypeがBuild Settingsとなっている行を選択しExport Dumpする
+    1. 作成されたダンプファイルをテキストエディタで開き下の囲みの通り修正する
+    1. 修正したものをImport Dumpする
+    1. 保存する (上書きしようとすると失敗するので他の名前か場所で保存してUAB閉じてから移動、このとき、保存先をデスクトップにするとファイルが壊れるという報告あり)
+    ~~~
+    修正前
+    0 vector enabledVRDevices
+    0 Array Array (0 items)
+    0 int size = 0
+
+    修正後
+    0 vector enabledVRDevices
+    0 Array Array (2 items)
+    0 int size = 2
+    [0]
+    1 string data = "None"
+    [1]
+    1 string data = "OpenVR"
+    ~~~
+    
+1. --vrをつけて起動するか、SteamVRが起動している状態で起動する（--novrをつけて起動するとSteamVRが起動していても通常モードになる）
+
+<br />
+必要ならfork元も参考にして下さい
+
+obtdai様版（ベースにさせて頂いています）
+
+[VRGIN](https://github.com/obtdai/VRGIN)
+
+[VRGIN.Template](https://github.com/obtdai/VRGIN.Template)
+
+Eusth様版（更に元、オリジナルです）
+
+[VRGIN](https://github.com/Eusth/VRGIN)
+
+[VRGIN.Template](https://github.com/Eusth/VRGIN.Template)
+
 # 操作方法
 新たに学校のアイコンのツールが追加されています
 
