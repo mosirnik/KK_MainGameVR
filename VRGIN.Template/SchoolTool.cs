@@ -21,6 +21,10 @@ namespace KoikatuVR
     public class SchoolTool : Tool
     {
         private bool _Linked = false;
+        private bool _IsStanding = true;
+        private bool _UsingHeadPos = (VR.Context.Settings as KoikatuSettings).UsingHeadPos;
+        private float _StandingHeight = (VR.Context.Settings as KoikatuSettings).StandingHeight;
+        private float _CrouchingHeight = (VR.Context.Settings as KoikatuSettings).CrouchingHeight;
 
         private KeySet keySet = (VR.Context.Settings as KoikatuSettings).KeySets[0];
         private int keySetIndex = 0;
@@ -58,7 +62,18 @@ namespace KoikatuVR
             cam.Rotate(Vector3.up * delta_y);
 
             Vector3 cf = Vector3.Scale(player.forward, new Vector3(1, 0, 1)).normalized;
-            cam.position = playerHead.position - (headCam.position - cam.position) + cf * 0.15f; // 首が見えるとうざいのでほんの少し前目
+
+            Vector3 pos;
+            if (_UsingHeadPos)
+            {
+                pos = playerHead.position;
+            }
+            else
+            {
+                pos = player.position;
+                pos.y += _IsStanding ? _StandingHeight : _CrouchingHeight;
+            }
+            cam.position = pos - (headCam.position - cam.position) + cf * 0.12f; // 首が見えるとうざいのでほんの少し前目
         }
 
         private void MovePlayerToCamera(Boolean onlyRotation = false)
@@ -130,6 +145,20 @@ namespace KoikatuVR
             GameObject.Find("ActionScene/CameraSystem").SetActive(true);
         }
 
+        private void Crouch()
+        {
+            _IsStanding = false;
+            VR.Input.Keyboard.KeyDown(VirtualKeyCode.VK_Z);
+            MoveCameraToPlayer();
+        }
+
+        private void StandUp()
+        {
+            _IsStanding = true;
+            VR.Input.Keyboard.KeyUp(VirtualKeyCode.VK_Z);
+            MoveCameraToPlayer();
+        }
+
         protected override void OnAwake()
         {
             base.OnAwake();
@@ -169,7 +198,6 @@ namespace KoikatuVR
         protected override void OnUpdate()
         {
             base.OnUpdate();
-
             var device = this.Controller;
 
             if (device.GetPressDown(ButtonMask.Trigger))
@@ -275,6 +303,9 @@ namespace KoikatuVR
                     case "NEXT":
                         // ここでは何もせず、上げたときだけ処理する
                         break;
+                    case "CROUCH":
+                        Crouch();
+                        break;
                     default:
                         VR.Input.Keyboard.KeyDown((VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), keyName));
                         break;
@@ -298,6 +329,9 @@ namespace KoikatuVR
                         break;
                     case "NEXT":
                         ChangeKeySet();
+                        break;
+                    case "CROUCH":
+                        StandUp();
                         break;
                     default:
                         VR.Input.Keyboard.KeyUp((VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), keyName));

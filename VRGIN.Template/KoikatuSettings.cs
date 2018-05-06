@@ -42,6 +42,15 @@ namespace KoikatuVR
         [XmlElement(Type = typeof(List<KeySet>))]
         public List<KeySet> KeySets { get { return _KeySets; } set { _KeySets = value; } }
         private List<KeySet> _KeySets = null;
+
+        public bool UsingHeadPos { get { return _UsingHeadPos; } set { _UsingHeadPos = value; } }
+        private bool _UsingHeadPos = false;
+
+        public float StandingHeight { get { return _StandingHeight; } set { _StandingHeight = value; } }
+        private float _StandingHeight = 1.5f;
+
+        public float CrouchingHeight { get { return _CrouchingHeight; } set { _CrouchingHeight = value; } }
+        private float _CrouchingHeight = 0.7f;
     }
 
     [XmlRoot("KeySet")]
