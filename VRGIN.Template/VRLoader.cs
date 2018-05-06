@@ -119,7 +119,7 @@ namespace KoikatuVR
 				// Boot VRManager!
 				// Note: Use your own implementation of GameInterpreter to gain access to a few useful operatoins
 				// (e.g. characters, camera judging, colliders, etc.)
-				VRManager.Create<GameInterpreter>(CreateContext("VRContext.xml"));
+				VRManager.Create<KoikatuInterpreter>(CreateContext("VRContext.xml"));
 				VR.Manager.SetMode<GenericStandingMode>();
 			}
 		}
