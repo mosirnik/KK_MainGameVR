@@ -23,8 +23,11 @@ namespace KoikatuVR
         private bool _Linked = false;
         private bool _IsStanding = true;
         private bool _UsingHeadPos = (VR.Context.Settings as KoikatuSettings).UsingHeadPos;
-        private float _StandingHeight = (VR.Context.Settings as KoikatuSettings).StandingHeight;
-        private float _CrouchingHeight = (VR.Context.Settings as KoikatuSettings).CrouchingHeight;
+        private float _StandingCameraPos = (VR.Context.Settings as KoikatuSettings).StandingCameraPos;
+        private float _CrouchingCameraPos = (VR.Context.Settings as KoikatuSettings).CrouchingCameraPos;
+        private bool _CrouchByHMDPos = (VR.Context.Settings as KoikatuSettings).CrouchByHMDPos;
+        private float _CrouchThrethould = (VR.Context.Settings as KoikatuSettings).CrouchThrethould;
+        private float _StandUpThrethould = (VR.Context.Settings as KoikatuSettings).StandUpThrethould;
 
         private KeySet keySet = (VR.Context.Settings as KoikatuSettings).KeySets[0];
         private int keySetIndex = 0;
@@ -71,9 +74,9 @@ namespace KoikatuVR
             else
             {
                 pos = player.position;
-                pos.y += _IsStanding ? _StandingHeight : _CrouchingHeight;
+                pos.y += _IsStanding ? _StandingCameraPos : _CrouchingCameraPos;
             }
-            cam.position = pos - (headCam.position - cam.position) + cf * 0.12f; // 首が見えるとうざいのでほんの少し前目
+            cam.position = pos - (headCam.position - cam.position) + cf * 0.13f; // 首が見えるとうざいのでほんの少し前目
         }
 
         private void MovePlayerToCamera(Boolean onlyRotation = false)
@@ -159,6 +162,25 @@ namespace KoikatuVR
             MoveCameraToPlayer();
         }
 
+        private void UpdateCrouch()
+        {
+            if (_CrouchByHMDPos && _Linked)
+            {
+                var cam = GameObject.Find("VRGIN_Camera (origin)").transform;
+                var headCam = GameObject.Find("VRGIN_Camera (origin)/VRGIN_Camera (eye)/VRGIN_Camera (head)").transform;
+                var delta_y = cam.position.y - headCam.position.y;
+
+                if (delta_y > _CrouchThrethould && _IsStanding)
+                {
+                    Crouch();
+                }
+                else if (delta_y < _StandUpThrethould && !_IsStanding)
+                {
+                    StandUp();
+                }
+            }
+        }
+
         protected override void OnAwake()
         {
             base.OnAwake();
@@ -181,6 +203,7 @@ namespace KoikatuVR
 
             UnlinkPlayer();
         }
+
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -199,6 +222,8 @@ namespace KoikatuVR
         {
             base.OnUpdate();
             var device = this.Controller;
+
+            UpdateCrouch();
 
             if (device.GetPressDown(ButtonMask.Trigger))
             {

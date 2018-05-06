@@ -46,11 +46,20 @@ namespace KoikatuVR
         public bool UsingHeadPos { get { return _UsingHeadPos; } set { _UsingHeadPos = value; } }
         private bool _UsingHeadPos = false;
 
-        public float StandingHeight { get { return _StandingHeight; } set { _StandingHeight = value; } }
-        private float _StandingHeight = 1.5f;
+        public float StandingCameraPos { get { return _StandingCameraPos; } set { _StandingCameraPos = value; } }
+        private float _StandingCameraPos = 1.5f;
 
-        public float CrouchingHeight { get { return _CrouchingHeight; } set { _CrouchingHeight = value; } }
-        private float _CrouchingHeight = 0.7f;
+        public float CrouchingCameraPos { get { return _CrouchingCameraPos; } set { _CrouchingCameraPos = value; } }
+        private float _CrouchingCameraPos = 0.7f;
+
+        public bool CrouchByHMDPos { get { return _CrouchByHMDPos; } set { _CrouchByHMDPos = value; } }
+        private bool _CrouchByHMDPos = true;
+
+        public float CrouchThrethould { get { return _CrouchThrethould; } set { _CrouchThrethould = value; } }
+        private float _CrouchThrethould = 0.9f;
+
+        public float StandUpThrethould { get { return _StandUpThrethould; } set { _StandUpThrethould = value; } }
+        private float _StandUpThrethould = 0.2f;
     }
 
     [XmlRoot("KeySet")]
