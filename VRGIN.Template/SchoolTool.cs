@@ -20,6 +20,8 @@ namespace KoikatuVR
 {
     public class SchoolTool : Tool
     {
+        private bool _Linked = false;
+
         private KeySet keySet = (VR.Context.Settings as KoikatuSettings).KeySets[0];
         private int keySetIndex = 0;
 
@@ -44,6 +46,8 @@ namespace KoikatuVR
 
         private void MoveCameraToPlayer()
         {
+            LinkPlayer();
+
             var player = GameObject.Find("ActionScene/Player").transform;
             var playerHead = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head").transform;
             var cam = GameObject.Find("VRGIN_Camera (origin)").transform;
@@ -87,25 +91,43 @@ namespace KoikatuVR
         // プレイヤーと一体化する
         private void LinkPlayer()
         {
-            var pl = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root");
-
-            if (pl != null)
+            if (!_Linked)
             {
-                GameObject.Find("ActionScene/CameraSystem").SetActive(false);
-                pl.SetActive(false);
-                MoveCameraToPlayer();
+                var pl = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root");
+
+                if (pl != null && pl.active)
+                {
+                    HoldCamera();
+                    pl.SetActive(false);
+                    MoveCameraToPlayer();
+                    _Linked = true;
+                }
             }
         }
 
         private void UnlinkPlayer()
         {
-            var pl = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root");
-
-            if (pl != null)
+            if (_Linked)
             {
-                GameObject.Find("ActionScene/CameraSystem").SetActive(true);
-                pl.SetActive(true);
+                var pl = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root");
+
+                if (pl != null)
+                {
+                    pl.SetActive(true);
+                    ReleaseCamera();
+                    _Linked = false;
+                }
             }
+        }
+
+        private void HoldCamera()
+        {
+            GameObject.Find("ActionScene/CameraSystem").SetActive(false);
+        }
+
+        private void ReleaseCamera()
+        {
+            GameObject.Find("ActionScene/CameraSystem").SetActive(true);
         }
 
         protected override void OnAwake()
