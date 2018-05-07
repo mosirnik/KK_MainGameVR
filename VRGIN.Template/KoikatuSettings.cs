@@ -56,10 +56,10 @@ namespace KoikatuVR
         private bool _CrouchByHMDPos = true;
 
         public float CrouchThrethould { get { return _CrouchThrethould; } set { _CrouchThrethould = value; } }
-        private float _CrouchThrethould = 0.9f;
+        private float _CrouchThrethould = 0.2f;
 
         public float StandUpThrethould { get { return _StandUpThrethould; } set { _StandUpThrethould = value; } }
-        private float _StandUpThrethould = 0.2f;
+        private float _StandUpThrethould = -0.6f;
     }
 
     [XmlRoot("KeySet")]
