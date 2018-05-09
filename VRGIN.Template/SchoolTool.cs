@@ -53,7 +53,7 @@ namespace KoikatuVR
 
         private void MoveCameraToPlayer()
         {
-            LinkPlayer();
+            //LinkPlayer();
 
             var player = GameObject.Find("ActionScene/Player").transform;
             var playerHead = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head").transform;
@@ -111,12 +111,11 @@ namespace KoikatuVR
         {
             if (!_Linked)
             {
-                var pl = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root");
+                var pl = GameObject.Find("ActionScene/Player");///chaM_001");///BodyTop/p_cf_body_bone_low/cf_j_root");
 
-                if (pl != null && pl.active)
+                if (pl != null && pl.activeSelf)
                 {
-                    HoldCamera();
-                    pl.SetActive(false);
+                    pl.transform.Find("chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root").gameObject.SetActive(false);
                     MoveCameraToPlayer();
                     _Linked = true;
                 }
@@ -127,25 +126,14 @@ namespace KoikatuVR
         {
             if (_Linked)
             {
-                var pl = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root");
+                var pl = GameObject.Find("ActionScene/Player");///chaM_001");///BodyTop/p_cf_body_bone_low/cf_j_root");
 
                 if (pl != null)
                 {
-                    pl.SetActive(true);
-                    ReleaseCamera();
+                    pl.transform.Find("chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root").gameObject.SetActive(true);// pl.activeSelf);
                     _Linked = false;
                 }
             }
-        }
-
-        private void HoldCamera()
-        {
-            GameObject.Find("ActionScene/CameraSystem").SetActive(false);
-        }
-
-        private void ReleaseCamera()
-        {
-            GameObject.Find("ActionScene/CameraSystem").SetActive(true);
         }
 
         private void Crouch()
@@ -368,10 +356,7 @@ namespace KoikatuVR
         public override List<HelpText> GetHelpTexts()
         {
             return new List<HelpText>(new HelpText[] {
-                HelpText.Create("Tap to click", FindAttachPosition("trackpad"), new Vector3(0, 0.02f, 0.05f)),
-                HelpText.Create("Slide to move cursor", FindAttachPosition("trackpad"), new Vector3(0.05f, 0.02f, 0), new Vector3(0.015f, 0, 0)),
-                HelpText.Create("Attach/Remove menu", FindAttachPosition("lgrip"), new Vector3(-0.06f, 0.0f, -0.05f))
-
+                HelpText.Create($"Link {_Linked}", FindAttachPosition("trigger"), new Vector3(0.1f, 0.04f, -0.05f)),
             });
         }
     }

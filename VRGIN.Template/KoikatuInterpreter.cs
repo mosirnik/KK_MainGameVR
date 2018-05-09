@@ -7,12 +7,32 @@ using VRGIN.Core;
 
 namespace KoikatuVR
 {
-    /*
-     * 今後の拡張用
-     * 現在は親クラスと同等
-     */
     class KoikatuInterpreter : GameInterpreter
     {
+        private GameObject _CameraSystem;
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
 
+            HoldCamera();
+        }
+
+        private void HoldCamera()
+        {
+            _CameraSystem = GameObject.Find("ActionScene/CameraSystem");
+
+            if (_CameraSystem != null)
+            {
+                _CameraSystem.SetActive(false);
+            }
+        }
+
+        private void ReleaseCamera()
+        {
+            if (_CameraSystem != null)
+            {
+                _CameraSystem.SetActive(true);
+            }
+        }
     }
 }
