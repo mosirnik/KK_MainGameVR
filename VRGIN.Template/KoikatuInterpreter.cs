@@ -192,13 +192,6 @@ namespace KoikatuVR
             //HoldCamera();
         }
 
-        protected override void OnLevel(int level)
-        {
-            base.OnLevel(level);
-
-            HoldCamera();
-        }
-        
         private void UpdateCrouch()
         {
             if (_Settings.CrouchByHMDPos)// && _CameraSystem != null)
@@ -326,6 +319,8 @@ namespace KoikatuVR
                 if (_Scene != ActionScene)
                 {
                     _Scene = ActionScene;
+                    HoldCamera();
+
                     changed = true;
                     VRLog.Info("Start ActionScene");
                 }
@@ -344,6 +339,7 @@ namespace KoikatuVR
             if (changed)
             {
                 ResetState();
+                ReleaseCamera();
             }
         }
     }
