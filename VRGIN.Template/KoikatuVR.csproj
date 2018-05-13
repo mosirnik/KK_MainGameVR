@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\Libs\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="IllusionPlugin">
       <HintPath>..\Libs\IPA\IPA\Data\Managed\IllusionPlugin.dll</HintPath>
       <Private>False</Private>

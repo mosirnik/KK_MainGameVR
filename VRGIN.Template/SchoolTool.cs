@@ -1,30 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
-using Valve.VR;
 using VRGIN.Controls;
 using VRGIN.Controls.Tools;
 using VRGIN.Core;
 using VRGIN.Helpers;
-using VRGIN.Modes;
-using VRGIN.U46.Visuals;
-using VRGIN.Visuals;
 using static SteamVR_Controller;
-using VRGIN.Native;
-using static VRGIN.Native.WindowsInterop;
 using WindowsInput.Native;
 
 namespace KoikatuVR
 {
     public class SchoolTool : Tool
     {
-        private bool _Linked = false;
-        private bool _IsStanding = true;
-        private bool _Walking = false;
-        private bool _NeedsMoveCamera = false;
-
+        private KoikatuInterpreter _Interpreter;
         private KoikatuSettings _Settings;
         private KeySet _KeySet;
         private int _KeySetIndex = 0;
@@ -48,127 +36,11 @@ namespace KoikatuVR
             }
         }
 
-        private void MoveCameraToPlayer()
-        {
-            var player = GameObject.Find("ActionScene/Player").transform;
-            var playerHead = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head").transform;
-            var cam = GameObject.Find("VRGIN_Camera (origin)").transform;
-            var headCam = GameObject.Find("VRGIN_Camera (origin)/VRGIN_Camera (eye)/VRGIN_Camera (head)").transform;
-
-            cam.rotation = player.rotation;
-            var delta_y =  cam.rotation.eulerAngles.y - headCam.rotation.eulerAngles.y;
-            cam.Rotate(Vector3.up * delta_y);
-
-            Vector3 cf = Vector3.Scale(player.forward, new Vector3(1, 0, 1)).normalized;
-
-            Vector3 pos;
-            if (_Settings.UsingHeadPos)
-            {
-                pos = playerHead.position;
-            }
-            else
-            {
-                pos = player.position;
-                pos.y += _IsStanding ? _Settings.StandingCameraPos : _Settings.CrouchingCameraPos;
-            }
-            cam.position = pos - (headCam.position - cam.position) + cf * 0.13f; // 首が見えるとうざいのでほんの少し前目
-        }
-
-        private void MovePlayerToCamera(Boolean onlyRotation = false)
-        {
-            var player = GameObject.Find("ActionScene/Player").transform;
-            var playerHead = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/p_cf_body_bone_low/cf_j_root/cf_n_height/cf_j_hips/cf_j_spine01/cf_j_spine02/cf_j_spine03/cf_j_neck/cf_j_head/cf_s_head").transform;
-            //var cam = GameObject.Find("VRGIN_Camera (origin)").transform;
-            var headCam = GameObject.Find("VRGIN_Camera (origin)/VRGIN_Camera (eye)/VRGIN_Camera (head)").transform;
-
-            var pos = headCam.position;
-            pos.y += player.position.y - playerHead.position.y;
-
-            var delta_y = headCam.rotation.eulerAngles.y - player.rotation.eulerAngles.y;
-            player.Rotate(Vector3.up * delta_y);
-            Vector3 cf = Vector3.Scale(player.forward, new Vector3(1, 0, 1)).normalized;
-
-            if (!onlyRotation)
-            {
-                player.position = pos - cf * 0.1f;
-            }
-        }
-
-        private void Rotate(int angle)
-        {
-            var player = GameObject.Find("ActionScene/Player").transform;
-            player.Rotate(Vector3.up * angle);
-            _NeedsMoveCamera = true;
-        }
-
-        // プレイヤーと一体化する
-        private void LinkPlayer()
-        {
-            //if (!_Linked)
-            //{
-                var pl = GameObject.Find("ActionScene/Player/chaM_001/BodyTop");///p_cf_body_bone_low/cf_j_root");
-
-                if (pl != null && pl.activeSelf)
-                {
-                    pl.transform.Find("p_cf_body_bone_low/cf_j_root").gameObject.SetActive(false);
-                    MoveCameraToPlayer();
-                    _Linked = true;
-                }
-                
-            //}
-        }
-
-        private void UnlinkPlayer()
-        {
-            //if (_Linked)
-            //{
-                var pl = GameObject.Find("ActionScene/Player/chaM_001/BodyTop/");///p_cf_body_bone_low/cf_j_root");
-
-                if (pl != null)
-                {
-                    pl.transform.Find("p_cf_body_bone_low/cf_j_root").gameObject.SetActive(true);
-                    _Linked = false;
-                }
-            //}
-        }
-
-        private void Crouch()
-        {
-            _IsStanding = false;
-            VR.Input.Keyboard.KeyDown(VirtualKeyCode.VK_Z);
-            _NeedsMoveCamera = true;
-        }
-
-        private void StandUp()
-        {
-            _IsStanding = true;
-            VR.Input.Keyboard.KeyUp(VirtualKeyCode.VK_Z);
-            _NeedsMoveCamera = true;
-        }
-
-        private void UpdateCrouch()
-        {
-            if (_Settings.CrouchByHMDPos && _Linked)
-            {
-                var cam = GameObject.Find("VRGIN_Camera (origin)").transform;
-                var headCam = GameObject.Find("VRGIN_Camera (origin)/VRGIN_Camera (eye)/VRGIN_Camera (head)").transform;
-                var delta_y = cam.position.y - headCam.position.y;
-
-                if (_IsStanding && delta_y > _Settings.CrouchThrethould)
-                {
-                    Crouch();
-                }
-                else if (!_IsStanding && delta_y < _Settings.StandUpThrethould)
-                {
-                    StandUp();
-                }
-            }
-        }
-
         protected override void OnAwake()
         {
             base.OnAwake();
 
+            _Interpreter = VR.Interpreter as KoikatuInterpreter;
             _Settings = (VR.Context.Settings as KoikatuSettings);
             _KeySet = _Settings.KeySets[0];
         }
@@ -176,7 +48,6 @@ namespace KoikatuVR
         protected override void OnStart()
         {
             base.OnStart();
-
         }
 
         protected override void OnDestroy()
@@ -187,22 +58,16 @@ namespace KoikatuVR
         protected override void OnDisable()
         {
             base.OnDisable();
-
-            UnlinkPlayer();
         }
 
         protected override void OnEnable()
         {
             base.OnEnable();
-
-            LinkPlayer();
         }
-        
+
         protected override void OnLevel(int level)
         {
             base.OnLevel(level);
-
-            LinkPlayer();
         }
 
         protected override void OnUpdate()
@@ -210,29 +75,20 @@ namespace KoikatuVR
             base.OnUpdate();
             var device = this.Controller;
 
-            UpdateCrouch();
-
             if (device.GetPressDown(ButtonMask.Trigger))
             {
-                MovePlayerToCamera(true);
-                VR.Input.Keyboard.KeyDown(VirtualKeyCode.SHIFT);
-                VR.Input.Mouse.LeftButtonDown();
-                _Walking = true;
+                _Interpreter.StartWalking();
             }
 
             if (device.GetPressUp(ButtonMask.Trigger))
             {
-                VR.Input.Mouse.LeftButtonUp();
-                VR.Input.Keyboard.KeyUp(VirtualKeyCode.SHIFT);
-                _Walking = false;
+                _Interpreter.StopWalking();
             }
-
 
             if (device.GetPress(ButtonMask.Grip))
             {
-                MovePlayerToCamera();
+                _Interpreter.MovePlayerToCamera();
             }
-
 
             if (device.GetPressDown(ButtonMask.Touchpad))
             {
@@ -293,12 +149,6 @@ namespace KoikatuVR
                     }
                 }
             }
-
-            if (_NeedsMoveCamera || _Walking)
-            {
-                MoveCameraToPlayer();
-                _NeedsMoveCamera = false;
-            }
         }
 
         private void InputKey(string keyName, KeyMode mode)
@@ -319,7 +169,7 @@ namespace KoikatuVR
                         // ここでは何もせず、上げたときだけ処理する
                         break;
                     case "CROUCH":
-                        Crouch();
+                        _Interpreter.Crouch();
                         break;
                     default:
                         VR.Input.Keyboard.KeyDown((VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), keyName));
@@ -337,16 +187,16 @@ namespace KoikatuVR
                         VR.Input.Mouse.RightButtonUp();
                         break;
                     case "LROTATION":
-                        Rotate(-45);
+                        _Interpreter.RotatePlayer(-45);
                         break;
                     case "RROTATION":
-                        Rotate(45);
+                        _Interpreter.RotatePlayer(45);
                         break;
                     case "NEXT":
                         ChangeKeySet();
                         break;
                     case "CROUCH":
-                        StandUp();
+                        _Interpreter.StandUp();
                         break;
                     default:
                         VR.Input.Keyboard.KeyUp((VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), keyName));
@@ -357,9 +207,7 @@ namespace KoikatuVR
 
         public override List<HelpText> GetHelpTexts()
         {
-            return new List<HelpText>(new HelpText[] {
-                HelpText.Create($"Link {_Linked}", FindAttachPosition("trigger"), new Vector3(0.1f, 0.04f, -0.05f)),
-            });
+            return new List<HelpText>();
         }
     }
 }

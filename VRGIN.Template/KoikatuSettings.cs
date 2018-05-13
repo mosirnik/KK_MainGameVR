@@ -38,7 +38,6 @@ namespace KoikatuVR
             return settings;
         }
 
-        // 配列だが、現在は初めの値しか使っていない
         [XmlElement(Type = typeof(List<KeySet>))]
         public List<KeySet> KeySets { get { return _KeySets; } set { _KeySets = value; } }
         private List<KeySet> _KeySets = null;
@@ -69,8 +68,8 @@ namespace KoikatuVR
         {
             Up = "F3";
             Down = "F4";
-            Right = "F2";
-            Left = "F8";
+            Right = "RROTATION";
+            Left = "LROTATION";
             Center = "RBUTTON";
         }
 
