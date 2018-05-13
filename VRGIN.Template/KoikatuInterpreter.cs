@@ -150,7 +150,14 @@ namespace KoikatuVR
 
             DetectScene();
             
-            if (_Scene == ActionScene)
+            if (_Scene == HScene)
+            {
+                if (_NeedsResetCamera)
+                {
+                    ResetCameraH();
+                }
+            }
+            else if (_Scene == ActionScene)
             {
                 GameObject map = GameObject.Find("Map");
 
@@ -182,11 +189,15 @@ namespace KoikatuVR
                     _NeedsMoveCamera = false;
                     _MoveCameraWaitTime = 0;
                 }
-            }
 
-            if (_NeedsResetCamera)
+                if (_NeedsResetCamera)
+                {
+                    ResetCameraAction();
+                }
+            }
+            else
             {
-                ResetCamera();
+                _NeedsResetCamera = false;
             }
 
             //HoldCamera();
@@ -215,12 +226,12 @@ namespace KoikatuVR
         {
             StandUp();
             StopWalking();
-            _NeedsResetCamera = false;
+            _NeedsResetCamera = true;
             _NeedsMoveCamera = false;
             _MoveCameraWaitTime = 0;
         }
 
-        private void ResetCamera()
+        private void ResetCameraAction()
         {
             var pl = GameObject.Find("ActionScene/Player/chaM_001/BodyTop");
             //_CameraSystem = GameObject.Find("ActionScene/CameraSystem");
@@ -243,6 +254,20 @@ namespace KoikatuVR
                 _NeedsResetCamera = false;
                 VRLog.Info("ResetCamera succeeded");
             }
+        }
+
+        private void ResetCameraH()
+        {
+            var cam = GameObject.FindObjectOfType<CameraControl_Ver2>();
+
+            if (cam != null)
+            {
+                cam.enabled = false;
+                _NeedsResetCamera = false;
+
+                VRLog.Info("! done.");
+            }
+            VRLog.Info("! camera not found.");
         }
 
         private void HoldCamera()
@@ -338,8 +363,8 @@ namespace KoikatuVR
 
             if (changed)
             {
-                ResetState();
                 ReleaseCamera();
+                ResetState();
             }
         }
     }
