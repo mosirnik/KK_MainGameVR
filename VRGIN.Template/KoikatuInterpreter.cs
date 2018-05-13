@@ -22,6 +22,7 @@ namespace KoikatuVR
         private bool _IsStanding = true;
         private bool _Walking = false;
         private bool _Dashing = false; // ダッシュ時は_Walkingと両方trueになる
+        private int _MoveCameraWaitTime = 0;
 
         public void MoveCameraToPlayer(bool onlyPosition = false)
         {
@@ -85,16 +86,28 @@ namespace KoikatuVR
 
         public void Crouch()
         {
-            _IsStanding = false;
-            VR.Input.Keyboard.KeyDown(VirtualKeyCode.VK_Z);
-            _NeedsMoveCamera = true;
+            if (_IsStanding)
+            {
+                _IsStanding = false;
+                VR.Input.Keyboard.KeyDown(VirtualKeyCode.VK_Z);
+
+                // 数F待ってから視点移動する
+                //_NeedsMoveCamera = true;
+                _MoveCameraWaitTime = 30;
+            }
         }
 
         public void StandUp()
         {
-            _IsStanding = true;
-            VR.Input.Keyboard.KeyUp(VirtualKeyCode.VK_Z);
-            _NeedsMoveCamera = true;
+            if (!_IsStanding)
+            {
+                _IsStanding = true;
+                VR.Input.Keyboard.KeyUp(VirtualKeyCode.VK_Z);
+
+                // 数F待ってから視点移動する
+                //_NeedsMoveCamera = true;
+                _MoveCameraWaitTime = 30;
+            }
         }
 
         public void StartWalking(bool dash = false)
@@ -153,10 +166,21 @@ namespace KoikatuVR
                 
                 UpdateCrouch();
 
+                if (_MoveCameraWaitTime > 0)
+                {
+                    _MoveCameraWaitTime--;
+
+                    if (_MoveCameraWaitTime == 0)
+                    {
+                        _NeedsMoveCamera = true;
+                    }
+                }
+
                 if (_NeedsMoveCamera || _Walking)
                 {
                     MoveCameraToPlayer(_Walking);
                     _NeedsMoveCamera = false;
+                    _MoveCameraWaitTime = 0;
                 }
             }
 
@@ -200,6 +224,7 @@ namespace KoikatuVR
             StopWalking();
             _NeedsResetCamera = false;
             _NeedsMoveCamera = false;
+            _MoveCameraWaitTime = 0;
         }
 
         private void ResetCamera()
