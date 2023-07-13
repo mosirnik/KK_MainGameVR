@@ -48,9 +48,9 @@ namespace KoikatuVR
 
         public static void Initialize()
         {
-            _vrGuiCamera = GameObject.Find("VRGIN_GUICamera")?.GetComponent<Camera>();
+            _vrGuiCamera = GameObject.Find("VRGIN_GUICamera")?.GetComponent<UnityEngine.Camera>();
         }
 
-        private static Camera _vrGuiCamera;
+        private static UnityEngine.Camera _vrGuiCamera;
     }
 }

@@ -39,7 +39,7 @@ namespace KoikatuVR.Interpreters
                 // The default camera location is a bit too far for a friendly
                 // conversation.
                 var heroine = talkScene.targetHeroine.transform;
-                VRMover.Instance.MoveTo(
+                Camera.VRMover.Instance.MoveTo(
                     heroine.TransformPoint(new Vector3(0, 1.4f, 0.55f)),
                     heroine.rotation * Quaternion.Euler(0, 180f, 0),
                     keepHeight: true);

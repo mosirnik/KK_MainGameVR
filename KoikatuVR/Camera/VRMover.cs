@@ -7,7 +7,7 @@ using VRGIN.Core;
 using HarmonyLib;
 using System.Collections;
 
-namespace KoikatuVR
+namespace KoikatuVR.Camera
 {
     /// <summary>
     /// A class responsible for moving the VR camera.
@@ -116,7 +116,7 @@ namespace KoikatuVR
                 else
                 {
                     VRLog.Debug("Approaching character (non-H)");
-                    var originalTarget = ActionCameraControl.GetIdealTransformFor(textScenario.AdvCamera);
+                    var originalTarget = Camera.ActionCameraControl.GetIdealTransformFor(textScenario.AdvCamera);
                     height = originalTarget.position.y;
                     rotation = originalTarget.rotation;
                 }
@@ -129,7 +129,7 @@ namespace KoikatuVR
             }
             else
             {
-                var target = ActionCameraControl.GetIdealTransformFor(textScenario.AdvCamera);
+                var target = Camera.ActionCameraControl.GetIdealTransformFor(textScenario.AdvCamera);
                 MoveWithHeuristics(target.position, target.rotation, keepHeight: false, pretendFading: isFadingOut);
             }
         }

@@ -199,7 +199,7 @@ namespace KoikatuVR.Interpreters
             }
         }
 
-        protected override CameraJudgement JudgeCameraInternal(Camera camera)
+        protected override CameraJudgement JudgeCameraInternal(UnityEngine.Camera camera)
         {
             if (camera.CompareTag("MainCamera"))
             {
@@ -213,7 +213,7 @@ namespace KoikatuVR.Interpreters
         /// </summary>
         /// <param name="camera"></param>
         /// <returns></returns>
-        private IEnumerator HandleMainCameraCo(Camera camera)
+        private IEnumerator HandleMainCameraCo(UnityEngine.Camera camera)
         {
             // Unity might have messed with the camera transform for this frame,
             // so we wait for the next frame to get clean data.
@@ -222,15 +222,15 @@ namespace KoikatuVR.Interpreters
             if (camera.name == "ActionCamera" || camera.name == "FrontCamera")
             {
                 VRLog.Info("Adding ActionCameraControl");
-                camera.gameObject.AddComponent<ActionCameraControl>();
+                camera.gameObject.AddComponent<Camera.ActionCameraControl>();
             }
             else if (camera.GetComponent<CameraControl_Ver2>() != null)
             {
                 VRLog.Info("New main camera detected: moving to {0} {1}", camera.transform.position, camera.transform.eulerAngles);
-                VRMover.Instance.MoveTo(camera.transform.position, camera.transform.rotation, keepHeight: false);
+                Camera.VRMover.Instance.MoveTo(camera.transform.position, camera.transform.rotation, keepHeight: false);
                 VRLog.Info("moved to {0} {1}", VR.Camera.Head.position, VR.Camera.Head.eulerAngles);
                 VRLog.Info("Adding CameraControlControl");
-                camera.gameObject.AddComponent<CameraControlControl>();
+                camera.gameObject.AddComponent<Camera.CameraControlControl>();
             }
             else
             {

@@ -11,7 +11,7 @@ using System.Reflection;
 // This file is a collection of hooks to move the VR camera at appropriate
 // points of the game.
 
-namespace KoikatuVR
+namespace KoikatuVR.Camera
 {
     [HarmonyPatch(typeof(ADV.TextScenario))]
     class TextScenarioPatches1

@@ -88,7 +88,7 @@ namespace KoikatuVR
 
         private void UpdateNearClipPlane(KoikatuSettings settings)
         {
-            VR.Camera.gameObject.GetComponent<Camera>().nearClipPlane = settings.NearClipPlane;
+            VR.Camera.gameObject.GetComponent<UnityEngine.Camera>().nearClipPlane = settings.NearClipPlane;
         }
     }
 

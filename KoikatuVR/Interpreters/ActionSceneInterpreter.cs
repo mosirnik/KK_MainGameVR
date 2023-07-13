@@ -160,7 +160,7 @@ namespace KoikatuVR.Interpreters
                 pos.y += _IsStanding ? _Settings.StandingCameraPos : _Settings.CrouchingCameraPos;
             }
 
-            VRMover.Instance.MoveTo(
+            Camera.VRMover.Instance.MoveTo(
                 pos + cf * 0.23f, // 首が見えるとうざいのでほんの少し前目にする
                 onlyPosition ? headCam.rotation : player.rotation,
                 keepHeight: false,

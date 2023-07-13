@@ -29,7 +29,7 @@ namespace KoikatuVR
 
         Background()
         {
-            VRMover.Instance.OnMove += OnCameraMove;
+            Camera.VRMover.Instance.OnMove += OnCameraMove;
         }
 
         public void OnCameraMove()

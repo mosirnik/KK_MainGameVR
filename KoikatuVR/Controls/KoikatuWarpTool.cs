@@ -26,13 +26,13 @@ namespace KoikatuVR.Controls
         protected override void OnEnable()
         {
             base.OnEnable();
-            VRMover.Instance.OnMove += OnCameraMove;
+            Camera.VRMover.Instance.OnMove += OnCameraMove;
         }
 
         protected override void OnDisable()
         {
             base.OnDisable();
-            VRMover.Instance.OnMove -= OnCameraMove;
+            Camera.VRMover.Instance.OnMove -= OnCameraMove;
         }
 
         protected override void OnUpdate()

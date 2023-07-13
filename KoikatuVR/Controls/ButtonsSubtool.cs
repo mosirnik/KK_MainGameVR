@@ -194,7 +194,7 @@ namespace KoikatuVR.Controls
             }
             var camera = VR.Camera.transform;
             var newRotation = Quaternion.AngleAxis(degrees, Vector3.up) * camera.rotation;
-            VRMover.Instance.MoveTo(camera.position, newRotation, keepHeight: false);
+            Camera.VRMover.Instance.MoveTo(camera.position, newRotation, keepHeight: false);
             if (actInterpreter != null)
             {
                 actInterpreter.MovePlayerToCamera();

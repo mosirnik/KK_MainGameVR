@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections;
 
-namespace KoikatuVR
+namespace KoikatuVR.Camera
 {
     /// <summary>
     /// This component takes over control of an Action camera.
@@ -55,7 +55,7 @@ namespace KoikatuVR
         {
             VRIdealCamera = new GameObject("VRIdealCamera").transform;
             VRIdealCamera.SetPositionAndRotation(transform.position, transform.rotation);
-            VRIdealCamera.gameObject.AddComponent<Camera>().enabled = false;
+            VRIdealCamera.gameObject.AddComponent<UnityEngine.Camera>().enabled = false;
             DontDestroyOnLoad(VRIdealCamera.gameObject);
 
             TransformDebug.targetTransform = transform;

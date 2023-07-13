@@ -5,7 +5,7 @@ using System.Text;
 using VRGIN.Core;
 using UnityEngine;
 
-namespace KoikatuVR
+namespace KoikatuVR.Camera
 {
     /// <summary>
     /// CameraControlControl disables a CameraControl_Ver2 object and
