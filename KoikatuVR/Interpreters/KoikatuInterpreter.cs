@@ -33,6 +33,7 @@ namespace KoikatuVR.Interpreters
             SceneInterpreter = new OtherSceneInterpreter();
             SceneManager.sceneLoaded += OnSceneLoaded;
             _mirrorManager = new Mirror.Manager();
+            VR.Camera.gameObject.AddComponent<Camera.VREffector>();
         }
 
         protected override void OnUpdate()
