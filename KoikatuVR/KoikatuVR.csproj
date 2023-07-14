@@ -43,6 +43,10 @@
       <HintPath>..\packages\IllusionLibs.Koikatu.Assembly-CSharp.2019.4.27.4\lib\net35\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IllusionLibs.Koikatu.Assembly-CSharp-firstpass.2019.4.27.4\lib\net35\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="BepInEx, Version=5.4.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\IllusionLibs.BepInEx.5.4.4\lib\net35\BepInEx.dll</HintPath>
       <Private>False</Private>
@@ -73,6 +77,7 @@
     <Compile Include="Camera\ActionCameraControl.cs" />
     <Compile Include="Background.cs" />
     <Compile Include="BepInExLoggerBackend.cs" />
+    <Compile Include="Camera\VREffector.cs" />
     <Compile Include="Controls\ButtonsSubtool.cs" />
     <Compile Include="Camera\CameraControlControl.cs" />
     <Compile Include="Caress\AibuColliderTracker.cs" />
@@ -185,6 +190,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\IllusionLibs.Koikatu.Assembly-CSharp.2019.4.27.4\build\IllusionLibs.Koikatu.Assembly-CSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\IllusionLibs.Koikatu.Assembly-CSharp.2019.4.27.4\build\IllusionLibs.Koikatu.Assembly-CSharp.targets'))" />
     <Error Condition="!Exists('..\packages\IllusionLibs.BepInEx.Harmony.2.2.0.1\build\IllusionLibs.BepInEx.Harmony.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\IllusionLibs.BepInEx.Harmony.2.2.0.1\build\IllusionLibs.BepInEx.Harmony.targets'))" />
+    <Error Condition="!Exists('..\packages\IllusionLibs.Koikatu.Assembly-CSharp-firstpass.2019.4.27.4\build\IllusionLibs.Koikatu.Assembly-CSharp-firstpass.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\IllusionLibs.Koikatu.Assembly-CSharp-firstpass.2019.4.27.4\build\IllusionLibs.Koikatu.Assembly-CSharp-firstpass.targets'))" />
   </Target>
   <Import Project="..\packages\IllusionLibs.BepInEx.Harmony.2.2.0.1\build\IllusionLibs.BepInEx.Harmony.targets" Condition="Exists('..\packages\IllusionLibs.BepInEx.Harmony.2.2.0.1\build\IllusionLibs.BepInEx.Harmony.targets')" />
+  <Import Project="..\packages\IllusionLibs.Koikatu.Assembly-CSharp-firstpass.2019.4.27.4\build\IllusionLibs.Koikatu.Assembly-CSharp-firstpass.targets" Condition="Exists('..\packages\IllusionLibs.Koikatu.Assembly-CSharp-firstpass.2019.4.27.4\build\IllusionLibs.Koikatu.Assembly-CSharp-firstpass.targets')" />
 </Project>

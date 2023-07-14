@@ -168,6 +168,9 @@ namespace KoikatuVR
             keySetsConfig = new KeySetsConfig(config, updateKeySets);
             updateKeySets();
 
+            // Fixed settings
+            settings.ApplyEffects = false; // We manage effects ourselves.
+
             return settings;
         }
 
