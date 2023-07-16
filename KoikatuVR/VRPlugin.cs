@@ -83,12 +83,21 @@ namespace KoikatuVR
                 // the game is under heavy load. We disable window ghosting in
                 // an attempt to counter this.
                 NativeMethods.DisableProcessWindowsGhosting();
+                TweakShadowSettings();
             }
         }
 
         private void UpdateNearClipPlane(KoikatuSettings settings)
         {
             VR.Camera.gameObject.GetComponent<UnityEngine.Camera>().nearClipPlane = settings.NearClipPlane;
+        }
+
+        private void TweakShadowSettings()
+        {
+            // Default shadows look too wobbly in VR.
+            QualitySettings.shadowProjection = ShadowProjection.StableFit;
+            QualitySettings.shadowCascades = 4;
+            QualitySettings.shadowCascade4Split = new Vector4(0.05f, 0.1f, 0.2f);
         }
     }
 
