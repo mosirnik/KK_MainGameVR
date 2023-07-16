@@ -198,6 +198,25 @@ The following button assignments are needed:
 
 In addition, you need to make it "pretend to be Vive controllers".
 
+## Common issues
+
+### Can't click on the vertual screen
+
+This plugin requires that the game window on the Winodws desktop is visible and
+not covered by something else.
+
+### Framerate is low
+
+If you experience a framerate drop when the camera approaches a character,
+particularly in an H scene, then the bottleneck is likely your GPU. I'd suggest
+turning down the antialiasing setting using the
+[GraphicsSettings](https://github.com/BepInEx/BepInEx.GraphicsSettings) plugin.
+If that is not enough, consider disabling some visual effects or reducing the rendering
+resolution in SteamVR.
+
+If you experience a low framerate in school, try disabling expensive plugins or
+reducing the number of students who attend the school.
+
 ## Building (for developers)
 
 This repository uses a submodule, so be sure to update it as appropriate (e.g. by running `git submodule update --init` after you pull).
