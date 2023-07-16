@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using VRGIN.Core;
 using UnityEngine;
+using UnityStandardAssets.ImageEffects;
 using KoikatuVR.Interpreters;
 
 // Fixes issues that are in the base game but are only relevant in VR.
@@ -110,5 +111,31 @@ namespace KoikatuVR
                 (interpreter.CurrentScene == KoikatuInterpreter.SceneType.HScene ||
                     interpreter.CurrentScene == KoikatuInterpreter.SceneType.TalkScene);
         }
+    }
+
+    /// <summary>
+    /// The game includes an old version of GlobalFog, which assumes that the
+    /// viewing frustum is always centered at the camera. This assumption is
+    /// invalid in VR, so we fix it up here.
+    /// </summary>
+    [HarmonyPatch(typeof(GlobalFog))]
+    class GlobalFogPatches
+    {
+        [HarmonyPatch("CustomGraphicsBlit")]
+        [HarmonyPrefix]
+        private static void PreCustomGraphicsBlit(Material fxMaterial)
+        {
+            UnityEngine.Camera camera = UnityEngine.Camera.current;
+            camera.CalculateFrustumCorners(
+                new Rect(0, 0, 1, 1), camera.farClipPlane, camera.stereoActiveEye, _frustumBuffer);
+            Matrix4x4 corners = Matrix4x4.zero;
+            corners.SetRow(0, camera.transform.TransformDirection(_frustumBuffer[1]));
+            corners.SetRow(1, camera.transform.TransformDirection(_frustumBuffer[2]));
+            corners.SetRow(2, camera.transform.TransformDirection(_frustumBuffer[3]));
+            corners.SetRow(3, camera.transform.TransformDirection(_frustumBuffer[0]));
+            fxMaterial.SetMatrix("_FrustumCornersWS", corners);
+        }
+
+        static readonly Vector3[] _frustumBuffer = new Vector3[4];
     }
 }
