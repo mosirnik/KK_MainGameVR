@@ -32,6 +32,7 @@ namespace KoikatuVR.Caress
         KoikatuSettings _settings;
         Controller _controller;
         AibuColliderTracker _aibuTracker;
+        Undresser _undresser;
         Controller.Lock _lock; // may be null but never invalid
         bool _triggerPressed; // Whether the trigger is currently pressed. false if _lock is null.
 
@@ -47,6 +48,7 @@ namespace KoikatuVR.Caress
                 return;
             }
             _aibuTracker = new AibuColliderTracker(proc, referencePoint: transform);
+            _undresser = new Undresser();
         }
 
         private void OnDestroy()
@@ -67,6 +69,7 @@ namespace KoikatuVR.Caress
             {
                 HandleTrigger();
                 HandleToolChange();
+                HandleUndress();
             }
         }
 
@@ -96,6 +99,8 @@ namespace KoikatuVR.Caress
                         _controller.StartRumble(new RumbleImpulse(1000));
                     }
                 }
+
+                _undresser.Enter(other);
             }
             catch (Exception e)
             {
@@ -111,6 +116,7 @@ namespace KoikatuVR.Caress
                 {
                     UpdateLock();
                 }
+                _undresser.Exit(other);
             }
             catch (Exception e)
             {
@@ -161,6 +167,21 @@ namespace KoikatuVR.Caress
                 HandCtrlHooks.InjectMouseScroll(1f);
             }
 
+        }
+
+        private void HandleUndress()
+        {
+            var device = SteamVR_Controller.Input((int)_controller.Tracking.index);
+            var proc = _aibuTracker.Proc;
+            if (device.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad))
+            {
+                var females = new Traverse(proc).Field<List<ChaControl>>("lstFemale").Value;
+                var toUndress = _undresser.ComputeUndressTarget(females, out int femaleIndex);
+                if (toUndress is ChaFileDefine.ClothesKind kind)
+                {
+                    females[femaleIndex].SetClothesStateNext((int)kind);
+                }
+            }
         }
 
         private void ReleaseLock()

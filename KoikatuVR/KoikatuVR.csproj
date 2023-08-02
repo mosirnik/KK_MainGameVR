@@ -78,6 +78,7 @@
     <Compile Include="Background.cs" />
     <Compile Include="BepInExLoggerBackend.cs" />
     <Compile Include="Camera\VREffector.cs" />
+    <Compile Include="Caress\Undresser.cs" />
     <Compile Include="Controls\ButtonsSubtool.cs" />
     <Compile Include="Camera\CameraControlControl.cs" />
     <Compile Include="Caress\AibuColliderTracker.cs" />
