@@ -4,21 +4,44 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using VRGIN.Core;
+using HarmonyLib;
 
 using static ChaFileDefine;
 
 namespace KoikatuVR.Caress
 {
+    /// <summary>
+    /// An object responsible for determining which clothing item to remove,
+    /// based on the controller position.
+    /// </summary>
     class Undresser
    {
-        private readonly Dictionary<Collider, InteractionBodyPart> _currentlyIntersecting =
-            new Dictionary<Collider, InteractionBodyPart>();
+        private readonly Dictionary<Collider, Util.ValueTuple<int, InteractionBodyPart>> _knownColliders =
+            new Dictionary<Collider, Util.ValueTuple<int, InteractionBodyPart>>();
+        private readonly HashSet<Collider> _currentlyIntersecting = new HashSet<Collider>();
+
+        public Undresser(HSceneProc proc)
+        {
+            // Populate _knownColliders.
+            var lstFemale = new Traverse(proc).Field("lstFemale").GetValue<List<ChaControl>>();
+            for (int i = 0; i < lstFemale.Count; i++)
+            {
+                var colliders = lstFemale[i].GetComponentsInChildren<Collider>(includeInactive: true);
+                foreach (var collider in colliders)
+                {
+                    if (ColliderBodyPart(collider) is InteractionBodyPart part)
+                    {
+                        _knownColliders.Add(collider, Util.ValueTuple.Create(i, part));
+                    }
+                }
+            }
+        }
 
         public void Enter(Collider collider)
         {
-            if (ColliderBodyPart(collider) is InteractionBodyPart part)
+            if (_knownColliders.ContainsKey(collider))
             {
-                _currentlyIntersecting.Add(collider, part);
+                _currentlyIntersecting.Add(collider);
             }
         }
 
@@ -34,10 +57,20 @@ namespace KoikatuVR.Caress
             {
                 return null;
             }
-            var part = _currentlyIntersecting.Values.Min();
-            var targets = _itemsForPart[(int)part];
+            var part = (InteractionBodyPart)9999;
+            foreach (var collider in _currentlyIntersecting)
+            {
+                var item = _knownColliders[collider];
+                if (item.Field2 < part)
+                {
+                    femaleIndex = item.Field1;
+                    part = item.Field2;
+                    break;
+                }
+            }
+
             var female = females[femaleIndex];
-            VRLog.Info($"undress targets={string.Join(",", targets.Select((y) => $"[{y.kind}:{y.max_state}]").ToArray())}, female={femaleIndex}");
+            var targets = _itemsForPart[(int)part];
             if (part == InteractionBodyPart.Crotch && IsWearingSkirt(female))
             {
                 // Special case: if the character is wearing a skirt, allow
@@ -70,7 +103,7 @@ namespace KoikatuVR.Caress
         /// A body part the user can interact with. A more specific part gets
         /// a lower number.
         /// </summary>
-        enum InteractionBodyPart
+        private enum InteractionBodyPart
         {
             Crotch,
             Groin,
@@ -85,7 +118,7 @@ namespace KoikatuVR.Caress
 
         private static readonly UndressTarget[][] _itemsForPart = new[]
         {
-            new[] { Target(ClothesKind.bot, 0), Target(ClothesKind.panst), Target(ClothesKind.shorts) },
+            new[] { Target(ClothesKind.bot), Target(ClothesKind.panst), Target(ClothesKind.shorts) },
             new[] { Target(ClothesKind.bot, 0), Target(ClothesKind.panst), Target(ClothesKind.shorts) },
             new[] { Target(ClothesKind.top, 0), Target(ClothesKind.bra) },
             new[] { Target(ClothesKind.socks), Target(ClothesKind.shorts, 2, 2) },
@@ -133,7 +166,7 @@ namespace KoikatuVR.Caress
             return null;
         }
 
-        public struct UndressTarget
+        private struct UndressTarget
         {
             public UndressTarget(ClothesKind k, int m, int mm)
             {

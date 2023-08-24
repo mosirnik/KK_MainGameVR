@@ -35,6 +35,7 @@ namespace KoikatuVR.Caress
         Undresser _undresser;
         Controller.Lock _lock; // may be null but never invalid
         bool _triggerPressed; // Whether the trigger is currently pressed. false if _lock is null.
+        Util.ValueTuple<ChaControl, ChaFileDefine.ClothesKind, Vector3>? _undressing;
 
         protected override void OnAwake()
         {
@@ -48,7 +49,7 @@ namespace KoikatuVR.Caress
                 return;
             }
             _aibuTracker = new AibuColliderTracker(proc, referencePoint: transform);
-            _undresser = new Undresser();
+            _undresser = new Undresser(proc);
         }
 
         private void OnDestroy()
@@ -61,16 +62,13 @@ namespace KoikatuVR.Caress
 
         protected override void OnUpdate()
         {
-            if (_lock != null && Manager.Scene.Instance.NowSceneNames[0] == "HPointMove")
-            {
-                ReleaseLock();
-            }
             if (_lock != null)
             {
                 HandleTrigger();
                 HandleToolChange();
                 HandleUndress();
             }
+            UpdateLock();
         }
 
         protected void OnTriggerEnter(Collider other)
@@ -84,23 +82,23 @@ namespace KoikatuVR.Caress
                 bool wasIntersecting = _aibuTracker.IsIntersecting();
                 if (_aibuTracker.AddIfRelevant(other))
                 {
-                    UpdateLock();
-                    if (_lock != null && _settings.AutomaticTouching)
-                    {
-                        var colliderKind = _aibuTracker.GetCurrentColliderKind(out int femaleIndex);
-                        if (HandCtrl.AibuColliderKind.reac_head <= colliderKind)
-                        {
-                            CaressUtil.SetSelectKindTouch(_aibuTracker.Proc, femaleIndex, colliderKind);
-                            StartCoroutine(CaressUtil.ClickCo());
-                        }
-                    }
                     if (!wasIntersecting && _aibuTracker.IsIntersecting())
                     {
                         _controller.StartRumble(new RumbleImpulse(1000));
+                        if (_settings.AutomaticTouching)
+                        {
+                            var colliderKind = _aibuTracker.GetCurrentColliderKind(out int femaleIndex);
+                            if (HandCtrl.AibuColliderKind.reac_head <= colliderKind)
+                            {
+                                CaressUtil.SetSelectKindTouch(_aibuTracker.Proc, femaleIndex, colliderKind);
+                                StartCoroutine(CaressUtil.ClickCo());
+                            }
+                        }
                     }
                 }
 
                 _undresser.Enter(other);
+                UpdateLock();
             }
             catch (Exception e)
             {
@@ -112,11 +110,9 @@ namespace KoikatuVR.Caress
         {
             try
             {
-                if (_aibuTracker.RemoveIfRelevant(other))
-                {
-                    UpdateLock();
-                }
+                _aibuTracker.RemoveIfRelevant(other);
                 _undresser.Exit(other);
+                UpdateLock();
             }
             catch (Exception e)
             {
@@ -126,7 +122,8 @@ namespace KoikatuVR.Caress
 
         private void UpdateLock()
         {
-            bool shouldHaveLock = _aibuTracker.IsIntersecting();
+            bool shouldHaveLock = (_aibuTracker.IsIntersecting() || _undressing != null) &&
+                    Manager.Scene.Instance.NowSceneNames[0] != "HPointMove";
             if (shouldHaveLock && _lock == null)
             {
                 _controller.TryAcquireFocus(out _lock);
@@ -151,10 +148,7 @@ namespace KoikatuVR.Caress
             {
                 HandCtrlHooks.InjectMouseButtonUp(0);
                 _triggerPressed = false;
-                if (!_aibuTracker.IsIntersecting())
-                {
-                    ReleaseLock();
-                }
+                UpdateLock();
             }
         }
 
@@ -173,14 +167,27 @@ namespace KoikatuVR.Caress
         {
             var device = SteamVR_Controller.Input((int)_controller.Tracking.index);
             var proc = _aibuTracker.Proc;
-            if (device.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad))
+            if (_undressing == null && device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
             {
                 var females = new Traverse(proc).Field<List<ChaControl>>("lstFemale").Value;
                 var toUndress = _undresser.ComputeUndressTarget(females, out int femaleIndex);
                 if (toUndress is ChaFileDefine.ClothesKind kind)
                 {
-                    females[femaleIndex].SetClothesStateNext((int)kind);
+                    _undressing = Util.ValueTuple.Create(females[femaleIndex], kind, transform.position);
                 }
+            }
+            if (_undressing is Util.ValueTuple<ChaControl, ChaFileDefine.ClothesKind, Vector3> undressing
+                && device.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad))
+            {
+                if (0.3f * 0.3f < (transform.position - undressing.Field3).sqrMagnitude)
+                {
+                    undressing.Field1.SetClothesState((int)undressing.Field2, 3);
+                }
+                else
+                {
+                    undressing.Field1.SetClothesStateNext((int)undressing.Field2);
+                }
+                _undressing = null;
             }
         }
 
@@ -190,6 +197,7 @@ namespace KoikatuVR.Caress
             if (_triggerPressed)
                 HandCtrlHooks.InjectMouseButtonUp(0);
             _triggerPressed = false;
+            _undressing = null;
             _lock.Release();
             _lock = null;
         }
