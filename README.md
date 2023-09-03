@@ -200,11 +200,6 @@ In addition, you need to make it "pretend to be Vive controllers".
 
 ## Common issues
 
-### Can't click on the vertual screen
-
-This plugin requires that the game window on the Winodws desktop is visible and
-not covered by something else.
-
 ### Framerate is low
 
 If you experience a framerate drop when the camera approaches a character,

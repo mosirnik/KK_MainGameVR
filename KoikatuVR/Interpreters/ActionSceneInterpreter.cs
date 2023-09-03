@@ -210,7 +210,7 @@ namespace KoikatuVR.Interpreters
 
             if (!dash)
             {
-                VR.Input.Keyboard.KeyDown(VirtualKeyCode.SHIFT);
+                VR.Input.Keyboard.KeyDown(VirtualKeyCode.LSHIFT);
                 _Dashing = true;
             }
 
@@ -227,7 +227,7 @@ namespace KoikatuVR.Interpreters
 
             if (_Dashing)
             {
-                VR.Input.Keyboard.KeyUp(VirtualKeyCode.SHIFT);
+                VR.Input.Keyboard.KeyUp(VirtualKeyCode.LSHIFT);
                 _Dashing = false;
             }
 

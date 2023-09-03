@@ -28,7 +28,7 @@ namespace KoikatuVR
 
         public Type VoiceCommandType { get { return typeof(VoiceCommand); } }
 
-        public bool ConfineMouse { get { return true;  } }
+        public bool ConfineMouse { get { return _settings.UseLegacyInputSimulator;  } }
 
         public bool EnforceDefaultGUIMaterials { get { return false;  } }
 

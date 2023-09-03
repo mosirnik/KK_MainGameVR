@@ -66,6 +66,13 @@ namespace KoikatuVR
 
         public float NearClipPlane { get { return _NearClipPlane; } set { _NearClipPlane = value; TriggerPropertyChanged("NearClipPlane"); } }
         private float _NearClipPlane;
+
+        public bool UseLegacyInputSimulator
+        {
+            get { return _UseLegacyInputSimulator; }
+            set { _UseLegacyInputSimulator = value; TriggerPropertyChanged("UseLegacyInputSimulator"); }
+        }
+        private bool _UseLegacyInputSimulator;
     }
 
     public class KeySet

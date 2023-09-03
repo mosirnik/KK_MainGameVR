@@ -7,6 +7,7 @@ using System.Collections;
 using UnityEngine;
 using HarmonyLib;
 using System.Runtime.InteropServices;
+using WindowsInput;
 
 namespace KoikatuVR
 {
@@ -75,6 +76,8 @@ namespace KoikatuVR
                 // VRGIN doesn't update the near clip plane until a first "main" camera is created, so we set it here.
                 UpdateNearClipPlane(settings);
                 settings.AddListener("NearClipPlane", (_, _1) => UpdateNearClipPlane(settings));
+                SetInputSimulator(settings);
+                settings.AddListener("UseLegacyInputSimulator", (_, _1) => SetInputSimulator(settings));
                 VR.Manager.SetMode<KoikatuStandingMode>();
                 VRFade.Create();
                 PrivacyScreen.Initialize();
@@ -90,6 +93,18 @@ namespace KoikatuVR
         private void UpdateNearClipPlane(KoikatuSettings settings)
         {
             VR.Camera.gameObject.GetComponent<UnityEngine.Camera>().nearClipPlane = settings.NearClipPlane;
+        }
+
+        private void SetInputSimulator(KoikatuSettings settings)
+        {
+            if (settings.UseLegacyInputSimulator)
+            {
+                VR.Manager.Input = new InputSimulator();
+            }
+            else
+            {
+                VR.Manager.Input = new RobustInputSimulator();
+            }
         }
 
         private void TweakShadowSettings()

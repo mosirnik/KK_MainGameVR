@@ -87,6 +87,13 @@ namespace KoikatuVR
                     new AcceptableValueRange<float>(0.001f, 0.2f)));
             Tie(nearClipPlane, v => settings.NearClipPlane = v);
 
+            var useLegacyInputSimulator = config.Bind(sectionGeneral, "Use legacy input simulator", false,
+                new ConfigDescription(
+                    "Simulate mouse and keyboard input by generating system-wide fake events",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = true }));
+            Tie(useLegacyInputSimulator, v => settings.UseLegacyInputSimulator = v);
+
             var usingHeadPos = config.Bind(sectionRoaming, "Use head position", false,
                 new ConfigDescription(
                     "Place the camera exactly at the protagonist's head (may cause motion sickness). If disabled, use a fixed height from the floor.",
