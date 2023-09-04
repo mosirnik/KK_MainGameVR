@@ -88,7 +88,8 @@ namespace KoikatuVR.Caress
                         if (_settings.AutomaticTouching)
                         {
                             var colliderKind = _aibuTracker.GetCurrentColliderKind(out int femaleIndex);
-                            if (HandCtrl.AibuColliderKind.reac_head <= colliderKind)
+                            if (HandCtrl.AibuColliderKind.reac_head <= colliderKind &&
+                                !CaressUtil.IsSpeaking(_aibuTracker.Proc, femaleIndex))
                             {
                                 CaressUtil.SetSelectKindTouch(_aibuTracker.Proc, femaleIndex, colliderKind);
                                 StartCoroutine(CaressUtil.ClickCo());

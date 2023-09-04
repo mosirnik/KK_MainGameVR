@@ -111,7 +111,8 @@ namespace KoikatuVR.Caress
 
                 if (_kissCoShouldEnd == null &&
                     HandCtrl.AibuColliderKind.reac_head <= colliderKind &&
-                    _settings.AutomaticTouchingByHmd)
+                    _settings.AutomaticTouchingByHmd &&
+                    !CaressUtil.IsSpeaking(_aibuTracker.Proc, femaleIndex))
                 {
                     StartCoroutine(TriggerReactionCo(femaleIndex, colliderKind));
                 }
