@@ -98,8 +98,10 @@ namespace KoikatuVR.Controls
                     VR.Input.Mouse.MiddleButtonDown();
                     break;
                 case AssignableFunction.LROTATION:
+                    Rotate(-_Settings.RotationAngle);
+                    break;
                 case AssignableFunction.RROTATION:
-                    // ここでは何もせず、上げたときだけ処理する
+                    Rotate(_Settings.RotationAngle);
                     break;
                 case AssignableFunction.SCROLLUP:
                     StartScroll(1);
@@ -149,10 +151,7 @@ namespace KoikatuVR.Controls
                     VR.Input.Mouse.MiddleButtonUp();
                     break;
                 case AssignableFunction.LROTATION:
-                    Rotate(-_Settings.RotationAngle);
-                    break;
                 case AssignableFunction.RROTATION:
-                    Rotate(_Settings.RotationAngle);
                     break;
                 case AssignableFunction.SCROLLUP:
                 case AssignableFunction.SCROLLDOWN:

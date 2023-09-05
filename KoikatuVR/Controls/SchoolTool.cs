@@ -273,6 +273,8 @@ namespace KoikatuVR.Controls
             {
                 case AssignableFunction.SCROLLDOWN:
                 case AssignableFunction.SCROLLUP:
+                case AssignableFunction.LROTATION:
+                case AssignableFunction.RROTATION:
                     return false;
                 default:
                     return true;
