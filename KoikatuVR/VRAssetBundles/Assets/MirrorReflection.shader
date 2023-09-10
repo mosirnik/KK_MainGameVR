@@ -96,4 +96,6 @@ Shader "FX/MirrorReflection"
 			ENDCG
 		}
 	}
+
+	Fallback "VertexLit" // For the shadow caster
 }
