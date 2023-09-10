@@ -76,13 +76,7 @@ Shader "FX/MirrorReflection"
 				fixed4 tex = tex2D(_MainTex, i.uv);
 				fixed4 refl;
 
-				bool leftEye;
-
-#ifdef UNITY_SINGLE_PASS_STEREO
-				leftEye = unity_StereoEyeIndex == 0;
-#else
-				leftEye = (unity_CameraProjection[0][2] <= 0);
-#endif
+				bool leftEye = unity_StereoEyeIndex == 0;
 				if (leftEye)
 				{
 					refl = tex2Dproj(_LeftReflectionTex, UNITY_PROJ_COORD(i.refl));
