@@ -81,31 +81,29 @@ namespace KoikatuVR.Mirror
             {
                 if (cam.stereoTargetEye == StereoTargetEyeMask.Both || cam.stereoTargetEye == StereoTargetEyeMask.Left)
                 {
-                    Vector3 eyePos = cam.transform.TransformPoint(SteamVR.instance.eyes[0].pos);
-                    Quaternion eyeRot = cam.transform.rotation * SteamVR.instance.eyes[0].rot;
                     Matrix4x4 projectionMatrix = GetSteamVRProjectionMatrix(cam, Valve.VR.EVREye.Eye_Left);
+                    var viewMatrix = cam.GetStereoViewMatrix(UnityEngine.Camera.StereoscopicEye.Left);
                     RenderTexture target = m_UseSharedRenderTexture ? m_SharedReflectionTextureLeft : reflectionData.left;
                     reflectionData.propertyBlock.SetTexture(s_LeftTexturePropertyID, target);
 
-                    RenderMirror(reflectionData.camera, target, eyePos, eyeRot, projectionMatrix);
+                    RenderMirror(reflectionData.camera, target, projectionMatrix, viewMatrix);
                 }
 
                 if (cam.stereoTargetEye == StereoTargetEyeMask.Both || cam.stereoTargetEye == StereoTargetEyeMask.Right)
                 {
-                    Vector3 eyePos = cam.transform.TransformPoint(SteamVR.instance.eyes[1].pos);
-                    Quaternion eyeRot = cam.transform.rotation * SteamVR.instance.eyes[1].rot;
                     Matrix4x4 projectionMatrix = GetSteamVRProjectionMatrix(cam, Valve.VR.EVREye.Eye_Right);
+                    var viewMatrix = cam.GetStereoViewMatrix(UnityEngine.Camera.StereoscopicEye.Right);
                     RenderTexture target = m_UseSharedRenderTexture ? m_SharedReflectionTextureRight : reflectionData.right;
                     reflectionData.propertyBlock.SetTexture(s_RightTexturePropertyID, target);
 
-                    RenderMirror(reflectionData.camera, target, eyePos, eyeRot, projectionMatrix);
+                    RenderMirror(reflectionData.camera, target, projectionMatrix, viewMatrix);
                 }
             }
             else
             {
                 RenderTexture target = m_UseSharedRenderTexture ? m_SharedReflectionTextureLeft : reflectionData.left;
                 reflectionData.propertyBlock.SetTexture(s_LeftTexturePropertyID, target);
-                RenderMirror(reflectionData.camera, target, cam.transform.position, cam.transform.rotation, cam.projectionMatrix);
+                RenderMirror(reflectionData.camera, target, cam.projectionMatrix, cam.worldToCameraMatrix);
             }
 
             // Apply the property block containing the texture references to the renderer
@@ -121,15 +119,12 @@ namespace KoikatuVR.Mirror
             s_InsideRendering = false;
         }
 
-        void RenderMirror(UnityEngine.Camera reflectionCamera, RenderTexture targetTexture, Vector3 camPosition, Quaternion camRotation, Matrix4x4 camProjectionMatrix)
+        void RenderMirror(UnityEngine.Camera reflectionCamera, RenderTexture targetTexture, Matrix4x4 camProjectionMatrix, Matrix4x4 camViewMatrix)
         {
-            // Copy camera position/rotation/projection data into the reflectionCamera
-            reflectionCamera.ResetWorldToCameraMatrix();
-            reflectionCamera.transform.position = camPosition;
-            reflectionCamera.transform.rotation = camRotation;
+            // Copy camera projection matrix into the reflectionCamera
             reflectionCamera.projectionMatrix = camProjectionMatrix;
-            reflectionCamera.targetTexture = targetTexture;
 
+            reflectionCamera.targetTexture = targetTexture;
             reflectionCamera.cullingMask = ~(1 << 4) & m_ReflectLayers.value; // never render water layer
 
             // find out the reflection plane: position and normal in world space
@@ -138,7 +133,7 @@ namespace KoikatuVR.Mirror
 
             // Reflect camera around reflection plane
             Vector4 worldSpaceClipPlane = Plane(pos, normal);
-            reflectionCamera.worldToCameraMatrix *= CalculateReflectionMatrix(worldSpaceClipPlane);
+            reflectionCamera.worldToCameraMatrix = camViewMatrix * CalculateReflectionMatrix(worldSpaceClipPlane);
 
             // Setup oblique projection matrix so that near plane is our reflection
             // plane. This way we clip everything behind it for free.
