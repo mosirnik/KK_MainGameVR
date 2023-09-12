@@ -160,6 +160,17 @@ pull the Trigger.
 You can also kiss or lick the female by moving your head to the right place.
 This can be turned off in the config.
 
+You can undress a female character by putting a controller on one of her
+clothing items, then pressing the touchpad. A single touchpad click will
+perform one level of undressing. If you press and hold the touchpad,
+move the controller away and then release the touchpad, it will completely
+remove that part of clothing.
+
+Unfortunately this direct undressing operation doesn't work as expected for
+all clothes because the plugin doesn't exactly know what parts of
+body each clothing item covers. You can always fall back to
+using the menu for clothing state changes.
+
 When changing location, you can use the green laser to point to a new location
 icon and pull the Trigger to confirm.
 
