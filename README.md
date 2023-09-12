@@ -188,6 +188,10 @@ Works out of the box.
 
 Works out of the box.
 
+### HTC Vive
+
+Works out of the box.
+
 ### HP motion controllers
 
 The following button assignments are needed:
@@ -196,7 +200,7 @@ The following button assignments are needed:
 * B and Y buttons: Application Menu Button
 * Joystick: Trackpad position & value
 
-In addition, you need to make it "pretend to be Vive controllers".
+In addition, you need to make it "pretend to be Oculus Touch controllers".
 
 ## Common issues
 
