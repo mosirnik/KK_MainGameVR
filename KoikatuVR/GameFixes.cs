@@ -128,11 +128,17 @@ namespace KoikatuVR
             UnityEngine.Camera camera = UnityEngine.Camera.current;
             camera.CalculateFrustumCorners(
                 new Rect(0, 0, 1, 1), camera.farClipPlane, camera.stereoActiveEye, _frustumBuffer);
+            // We need to transform these frustum corners to world space, but
+            // this transformation is different for each eye. Fortunately, here
+            // (inside OnRenderImage) Unity seems to have set up cameraToWorldMatrix
+            // correctly for the currently active eye. We just need to
+            // adjust it to cancel the Z-flipping.
+            var cam2world = camera.cameraToWorldMatrix * Matrix4x4.Scale(new Vector3(1f, 1f, -1f));
             Matrix4x4 corners = Matrix4x4.zero;
-            corners.SetRow(0, camera.transform.TransformDirection(_frustumBuffer[1]));
-            corners.SetRow(1, camera.transform.TransformDirection(_frustumBuffer[2]));
-            corners.SetRow(2, camera.transform.TransformDirection(_frustumBuffer[3]));
-            corners.SetRow(3, camera.transform.TransformDirection(_frustumBuffer[0]));
+            corners.SetRow(0, cam2world.MultiplyVector(_frustumBuffer[1]));
+            corners.SetRow(1, cam2world.MultiplyVector(_frustumBuffer[2]));
+            corners.SetRow(2, cam2world.MultiplyVector(_frustumBuffer[3]));
+            corners.SetRow(3, cam2world.MultiplyVector(_frustumBuffer[0]));
             fxMaterial.SetMatrix("_FrustumCornersWS", corners);
         }
 
