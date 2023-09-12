@@ -162,7 +162,6 @@ namespace KoikatuVR.Caress
                 name == "cf_hit_spine03" ||
                 name == "cf_hit_berry")
                 return InteractionBodyPart.Torso;
-            VRLog.Warn($"Unknwon collider: {collider.name}");
             return null;
         }
 
