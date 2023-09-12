@@ -36,7 +36,7 @@ This plugin assumes that your VR controller has the following buttons/controls:
 * Application menu button
 * Trigger button
 * Grip button
-* Touchpad
+* Touchpad or Thumbstick
 
 You may need to tweak button assignments in SteamVR's per-game settings if your
 controllers don't natively have these. See the Controller Support section for
@@ -72,7 +72,7 @@ The warp tool allows you to move around in the 3D space.
 
 Use the touchpad to teleport. Before you finish teleporting, you can draw a
 circle along the rim of the trackpad (or similarly rotate the thumbstick)
-to change your orientation after teleporting.
+to change your would-be orientation after teleporting.
 
 Holding the Grip button takes you into grab action. Here you can move around
 by "grabbing" the world. If you additionally press Trigger, you can also rotate
@@ -110,8 +110,8 @@ For the hand tool:
 
 For touchpad inputs, you need to press the touchpad or click the thumbstick.
 Just touching the touchpad or tilting the thumbstick won't be recognized.
-An exception to this rule is mouse wheel scroll actions, which only require
-touching.
+Exceptions to this rule are mouse wheel scroll actions and rotate actions,
+which only require touching.
 
 ## Situation-specific controls
 
